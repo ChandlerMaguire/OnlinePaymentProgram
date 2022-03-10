@@ -90,7 +90,8 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
-
+                //SendTransfer();
+                ListUsers();
             }
 
             if (menuSelection == 5)
@@ -163,12 +164,43 @@ namespace TenmoClient
         public void GetBalance()
         {
             ApiAccount account = tenmoApiService.GetAccount();
-<<<<<<< HEAD
             Console.WriteLine($"Your current abbout balance is: {account.Balance.ToString("C")}");
-=======
-            Console.WriteLine($"Your current account balance is: ${account.Balance}");
->>>>>>> e7c17cc3b82cec7524e4041ebedad69f11e472f5
             console.Pause();
+        }
+        public void ListUsers()
+        {
+            List<ApiUser> users = tenmoApiService.GetUsers();
+            foreach (ApiUser user in users)
+            {
+                Console.WriteLine($"{user.UserId} {user.Username}");
+            }
+        }
+        public void GetTransfeById(int id)
+        {
+            ApiTransfer transfer = tenmoApiService.GetTransfer();
+            ApiUser user = tenmoApiService.GetUserById(id);
+            Console.WriteLine($"{transfer.AccountFrom}");
+        }
+        public void SendTransfer()
+        {
+            List<ApiUser> users = tenmoApiService.GetUsers();
+            int accountFromId = console.PromptForTransferAccoutFrom();
+            if (accountFromId == 0)
+            {
+                return;
+            }
+            int accountToId = console.PromptForTransferAccountTo();
+            if (accountToId == 0)
+            {
+                return;
+            }
+            decimal amount = console.PromptForTransferAmount();
+            if (amount == 0)
+            {
+                return;
+            }
         }
     }
 }
+
+

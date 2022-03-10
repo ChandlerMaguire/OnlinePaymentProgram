@@ -16,12 +16,13 @@ namespace TenmoServer.Controllers
     {
         private ITransferDao transferDao;
         private IUserDao userDao;
-        public TransferController( ITransferDao transferDao)
+        private IAccountDao accountDao;
+        public TransferController(ITransferDao transferDao, IAccountDao accountDao)
         {
             this.transferDao = transferDao;
-           
+            this.accountDao = accountDao;
         }
-      
+        [HttpGet]
         public void ListUsers()
         {
             List<User> users = userDao.GetUsers();
@@ -29,22 +30,33 @@ namespace TenmoServer.Controllers
             {
                 Console.WriteLine($"{user.UserId} {user.Username}");
             }
-          
         }
-       [HttpPost()]
-       public ActionResult<bool> SendTransfer(Transfer transfer)
+        [HttpPost()]
+        [AllowAnonymous]
+        public ActionResult<bool> SendTransfer(Transfer transfer)
         {
+            string userId = User.FindFirst("sub").Value;
+            int id = Int32.Parse(userId);
 
+            Account account = accountDao.GetAccountByUserId(id);
             bool result = transferDao.SendBucks(transfer);
-           
-            if(result)
+            if (result)
             {
-                return Ok(result);
+
+                if (transfer.AccountFrom == id)
+                {
+                    return BadRequest("Both accounts can't be the same.");
+                }
+                else if (transfer.Amount <= 0)
+                {
+                    return BadRequest("Amount must be greater than 0.");
+                }
+                else if (transfer.Amount > account.Balance)
+                {
+                    return BadRequest("Insufficient funds.");
+                }
             }
-            else
-            {
-                return NotFound();
-            }
+            return result = true;
         }
     }
 }

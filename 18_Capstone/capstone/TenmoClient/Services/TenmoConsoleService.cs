@@ -50,9 +50,30 @@ namespace TenmoClient.Services
             };
             return loginUser;
         }
+       
 
         // Add application-specific UI methods here...
-
+        public int PromptForTransferAccountTo()
+        {
+            Console.WriteLine("Please input user id you would like to transfer to");
+            string userInput = Console.ReadLine();
+            int accountTo = Int32.Parse(userInput);
+            return accountTo;
+        }
+        public int PromptForTransferAccoutFrom()
+        {
+            Console.WriteLine("Please input your user id");
+            string userInput = Console.ReadLine();
+            int accountFrom = Int32.Parse(userInput);
+            return accountFrom;
+        }
+        public decimal PromptForTransferAmount()
+        {
+            Console.WriteLine("Please input amount to transfer");
+            string userInput = Console.ReadLine();
+            decimal amount = Decimal.Parse(userInput);
+            return amount;
+        }
 
     }
 }

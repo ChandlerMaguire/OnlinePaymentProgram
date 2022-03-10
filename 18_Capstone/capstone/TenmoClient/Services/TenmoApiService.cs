@@ -18,6 +18,27 @@ namespace TenmoClient.Services
             CheckForError(response);
             return response.Data;
         }
+        public List<ApiUser> GetUsers()
+        {
+            RestRequest request = new RestRequest();
+            IRestResponse<List<ApiUser>> response = client.Get<List<ApiUser>>(request);
+            CheckForError(response);
+            return response.Data;
+        }
+        public ApiTransfer GetTransfer()
+        {
+            RestRequest request = new RestRequest("transfer");
+            IRestResponse<ApiTransfer> response = client.Get<ApiTransfer>(request);
+            CheckForError(response);
+            return response.Data;
+        }
+        public ApiUser GetUserById(int id)
+        {
+            RestRequest request = new RestRequest($"users/{id}");
+            IRestResponse<ApiUser> response = client.Get<ApiUser>(request);
+            CheckForError(response);
+            return response.Data;
+        }
 
         protected void CheckForError(IRestResponse response)
         {
