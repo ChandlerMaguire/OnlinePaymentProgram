@@ -1,4 +1,6 @@
-﻿namespace TenmoServer.Models
+﻿using System;
+
+namespace TenmoServer.Models
 {
     public class User
     {
@@ -7,6 +9,11 @@
         public string PasswordHash { get; set; }
         public string Salt { get; set; }
         public string Email { get; set; }
+
+        internal static object FindFirst(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>
