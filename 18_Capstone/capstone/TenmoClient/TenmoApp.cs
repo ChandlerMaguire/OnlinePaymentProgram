@@ -90,6 +90,7 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
+
             }
 
             if (menuSelection == 5)
@@ -162,7 +163,7 @@ namespace TenmoClient
         public void GetBalance()
         {
             ApiAccount account = tenmoApiService.GetAccount();
-            Console.WriteLine(account.Balance);
+            Console.WriteLine($"Your current abbout balance is: {account.Balance.ToString("C")}");
             console.Pause();
         }
     }
