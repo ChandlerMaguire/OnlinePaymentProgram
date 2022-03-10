@@ -162,7 +162,7 @@ namespace TenmoClient
         public void GetBalance()
         {
             ApiAccount account = tenmoApiService.GetAccount();
-            Console.WriteLine(account.Balance);
+            Console.WriteLine($"Your current account balance is: ${account.Balance}");
             console.Pause();
         }
     }

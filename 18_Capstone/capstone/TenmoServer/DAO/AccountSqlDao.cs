@@ -44,6 +44,8 @@ namespace TenmoServer.DAO
             return returnAccount;
         }
 
+        
+
         private Account GetAccountFromReader(SqlDataReader reader)
         {
             Account a = new Account()
