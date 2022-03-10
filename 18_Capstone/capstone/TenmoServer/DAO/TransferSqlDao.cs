@@ -88,7 +88,25 @@ namespace TenmoServer.DAO
             }
             return result;
         }
+        public List<Transfer> GetTransfers()
+        {
+            List<Transfer> transfers = new List<Transfer>();
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfer", conn);
 
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Transfer transfer = GetTransferFromReader(reader);
+                        transfers.Add(transfer);
+
+                    }
+                }
+            return transfers;
+        }
 
         private Transfer GetTransferFromReader(SqlDataReader reader)
         {

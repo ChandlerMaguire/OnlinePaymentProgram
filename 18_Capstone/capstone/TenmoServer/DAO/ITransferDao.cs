@@ -6,6 +6,7 @@ namespace TenmoServer.DAO
     public interface ITransferDao
     {
         Transfer GetTransferById(int id);
+        List<Transfer> GetTransfers();
         bool SendBucks(Transfer transfer);
     }
 }

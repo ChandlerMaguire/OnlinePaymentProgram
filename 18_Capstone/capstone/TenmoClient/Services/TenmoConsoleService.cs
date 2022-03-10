@@ -58,6 +58,7 @@ namespace TenmoClient.Services
             Console.WriteLine("Please input user id you would like to transfer to");
             string userInput = Console.ReadLine();
             int accountTo = Int32.Parse(userInput);
+            accountTo += 1000;
             return accountTo;
         }
         public int PromptForTransferAccoutFrom()
@@ -65,6 +66,7 @@ namespace TenmoClient.Services
             Console.WriteLine("Please input your user id");
             string userInput = Console.ReadLine();
             int accountFrom = Int32.Parse(userInput);
+            accountFrom += 1000;
             return accountFrom;
         }
         public decimal PromptForTransferAmount()

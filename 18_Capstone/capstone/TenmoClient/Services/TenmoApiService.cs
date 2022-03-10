@@ -20,7 +20,7 @@ namespace TenmoClient.Services
         }
         public List<ApiUser> GetUsers()
         {
-            RestRequest request = new RestRequest();
+            RestRequest request = new RestRequest("user");
             IRestResponse<List<ApiUser>> response = client.Get<List<ApiUser>>(request);
             CheckForError(response);
             return response.Data;
@@ -32,12 +32,25 @@ namespace TenmoClient.Services
             CheckForError(response);
             return response.Data;
         }
-
-        public ApiTransfer AddTransfer(ApiTransfer newTransfer)
+        public ApiTransfer GetTransferById(int id)
+        {
+            RestRequest request = new RestRequest($"transfer/{id}");
+            IRestResponse<ApiTransfer> response = client.Get<ApiTransfer>(request);
+            CheckForError(response);
+            return response.Data;
+        }
+        public List<ApiTransfer> GetTransfers()
+        {
+            RestRequest request = new RestRequest("transfer");
+            IRestResponse<List<ApiTransfer>> response = client.Get<List<ApiTransfer>>(request);
+            CheckForError(response);
+            return response.Data;
+        }
+        public bool AddTransfer(ApiTransfer newTransfer)
         {
             RestRequest request = new RestRequest($"transfer");
             request.AddJsonBody(newTransfer);
-            IRestResponse<ApiTransfer> response = client.Post<ApiTransfer>(request);
+            IRestResponse<bool> response = client.Post<bool>(request);
             CheckForError(response);
             return response.Data;
         }
@@ -45,6 +58,13 @@ namespace TenmoClient.Services
         {
             RestRequest request = new RestRequest($"users/{id}");
             IRestResponse<ApiUser> response = client.Get<ApiUser>(request);
+            CheckForError(response);
+            return response.Data;
+        }
+        public ApiAccount GetAccountById(int id)
+        {
+            RestRequest request = new RestRequest($"account/{id}");
+            IRestResponse<ApiAccount> response = client.Get<ApiAccount>(request);
             CheckForError(response);
             return response.Data;
         }

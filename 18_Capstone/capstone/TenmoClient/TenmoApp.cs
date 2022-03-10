@@ -80,6 +80,7 @@ namespace TenmoClient
             if (menuSelection == 2)
             {
                 // View your past transfers
+                GetTransfers();
             }
 
             if (menuSelection == 3)
@@ -91,9 +92,10 @@ namespace TenmoClient
             {
                 // Send TE bucks
                 //ListUsers();
-
+                ////List<ApiUser> users = tenmoApiService.GetUsers();
+                // Console.WriteLine(users);
                 SendTransfer();
-               
+
             }
 
             if (menuSelection == 5)
@@ -177,15 +179,33 @@ namespace TenmoClient
                 Console.WriteLine($"{user.UserId} {user.Username}");
             }
         }
-        public void GetTransfeById(int id)
+        public void GetTransferById(int id)
         {
-            ApiTransfer transfer = tenmoApiService.GetTransfer();
-            ApiUser user = tenmoApiService.GetUserById(id);
-            Console.WriteLine($"{transfer.AccountFrom}");
+            ApiTransfer transfer = tenmoApiService.GetTransferById(id);
+            Console.WriteLine($"{transfer.TransferId} {transfer.AccountFrom} {transfer.AccountTo} {transfer.TransferTypeId} {transfer.TransferStatusId} {transfer.Amount}");
         }
         public void SendTransfer()
         {
-            //List<ApiUser> users = tenmoApiService.GetUsers();
+            try
+            {
+                List<ApiUser> users = tenmoApiService.GetUsers();
+
+                Console.WriteLine();
+                Console.WriteLine();
+
+                foreach (ApiUser user in users)
+                {
+                    Console.WriteLine($"{user.UserId} {user.Username}");
+                }
+                Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine();
+                Console.WriteLine("Unable to list users: " + ex.Message);
+            }
+
             int accountFromId = console.PromptForTransferAccoutFrom();
             if (accountFromId == 0)
             {
@@ -197,17 +217,40 @@ namespace TenmoClient
                 return;
             }
             decimal amount = console.PromptForTransferAmount();
-            
+
             if (amount == 0)
             {
                 return;
             }
             int transferStatusId = 2;
             int transferTypeId = 2;
-            ApiTransfer transfer = new ApiTransfer(accountToId, accountFromId, amount,transferTypeId, transferStatusId);
+            ApiTransfer transfer = new ApiTransfer(accountToId, accountFromId, amount, transferTypeId, transferStatusId);
             tenmoApiService.AddTransfer(transfer);
+
+
+            //ApiAccount accountFrom = tenmoApiService.GetAccountById(accountFromId);
+            //ApiAccount accountTo = tenmoApiService.GetAccountById(accountToId);
+            //Console.WriteLine("Transfer successful.");
+            //Console.WriteLine($"{accountFrom.Account_Id} {accountFrom.Balance}");
+            //Console.WriteLine($"{accountTo.Account_Id} {accountTo.Balance}");
+            //console.Pause();
+        }
+        public void GetTransfers()
+        {
+            List<ApiTransfer> transfers = tenmoApiService.GetTransfers();
+            foreach(ApiTransfer transfer in transfers)
+            {
+                Console.WriteLine($"{transfer.TransferId} {transfer.AccountFrom} {transfer.AccountTo} {transfer.Amount}");
+            }
+            console.Pause();
+            Console.Write("Input ID to see transfer details.");
+            string userInput = Console.ReadLine();
+            int transferId = Int32.Parse(userInput);
+            GetTransferById(transferId);
+            console.Pause();
+            }
         }
     }
-}
+
 
 

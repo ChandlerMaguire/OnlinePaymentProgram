@@ -17,18 +17,38 @@ namespace TenmoServer.Controllers
         private ITransferDao transferDao;
         private IUserDao userDao;
         private IAccountDao accountDao;
-        public TransferController(ITransferDao transferDao, IAccountDao accountDao)
+        public TransferController(ITransferDao transferDao, IAccountDao accountDao, IUserDao userDao)
         {
             this.transferDao = transferDao;
             this.accountDao = accountDao;
+            this.userDao = userDao;
         }
         [HttpGet]
-        public void ListUsers()
+        public ActionResult<List<Transfer>> GetTransfers()
         {
-            List<User> users = userDao.GetUsers();
-            foreach (User user in users)
+            List<Transfer> transfers = transferDao.GetTransfers();
+
+            if (transfers.Count > 0)
             {
-                Console.WriteLine($"{user.UserId} {user.Username}");
+                return Ok(transfers);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet("{id}")]
+        public ActionResult<Transfer> GetTransferById(int id)
+        {
+            Transfer transfer = transferDao.GetTransferById(id);
+
+            if (transfer != null)
+            {
+                return Ok(transfer);
+            }
+            else
+            {
+                return NotFound();
             }
         }
         [HttpPost()]
@@ -66,7 +86,7 @@ namespace TenmoServer.Controllers
             }
 
             return true;
-           
+
         }
     }
 }
