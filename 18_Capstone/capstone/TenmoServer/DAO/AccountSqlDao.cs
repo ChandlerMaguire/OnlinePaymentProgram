@@ -44,7 +44,33 @@ namespace TenmoServer.DAO
             return returnAccount;
         }
 
-        
+        public Account GetAccountByAccountId(int id)
+        {
+            Account returnAccount = null;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM account WHERE account_id = @id", conn);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        returnAccount = GetAccountFromReader(reader);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return returnAccount;
+        }
 
         private Account GetAccountFromReader(SqlDataReader reader)
         {

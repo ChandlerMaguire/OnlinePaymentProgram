@@ -87,7 +87,7 @@ namespace TenmoServer.DAO
                     users.Add(user);
                 }
             }
-                return users;  
+            return users;
         }
         public User AddUser(string username, string password)
         {
@@ -122,18 +122,36 @@ namespace TenmoServer.DAO
 
             return GetUser(username);
         }
-
-        public User GetUserFromReader(SqlDataReader reader)
+        public User GetCurrentUser(int userId)
         {
-            User u = new User()
+            User user = null;
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                UserId = Convert.ToInt32(reader["user_id"]),
-                Username = Convert.ToString(reader["username"]),
-                PasswordHash = Convert.ToString(reader["password_hash"]),
-                Salt = Convert.ToString(reader["salt"]),
-            };
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT * FROM tenmo_user WHERE user_id = @id", conn);
+                cmd.Parameters.AddWithValue("@id", userId);
+                SqlDataReader reader = cmd.ExecuteReader();
 
-            return u;
+                if (reader.Read())
+                {
+                   user = GetUserFromReader(reader);
+                }
+                return user;
+            }
+        }
+
+            public User GetUserFromReader(SqlDataReader reader)
+            {
+                User u = new User()
+                {
+                    UserId = Convert.ToInt32(reader["user_id"]),
+                    Username = Convert.ToString(reader["username"]),
+                    PasswordHash = Convert.ToString(reader["password_hash"]),
+                    Salt = Convert.ToString(reader["salt"]),
+                };
+
+                return u;
+            }
         }
     }
-}
+

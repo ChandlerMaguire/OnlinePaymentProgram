@@ -8,5 +8,6 @@ namespace TenmoServer.DAO
         User GetUser(string username);
         User AddUser(string username, string password);
         List<User> GetUsers();
+        User GetCurrentUser(int userId);
     }
 }

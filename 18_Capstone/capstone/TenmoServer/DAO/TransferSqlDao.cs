@@ -116,6 +116,8 @@ namespace TenmoServer.DAO
                 Amount = Convert.ToDecimal(reader["amount"]),
                 TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]),
                 TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]),
+                AccountFrom = Convert.ToInt32(reader["account_from"]),
+                AccountTo = Convert.ToInt32(reader["account_to"])
 
             };
 

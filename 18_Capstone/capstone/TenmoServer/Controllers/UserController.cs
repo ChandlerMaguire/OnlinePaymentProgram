@@ -33,5 +33,22 @@ namespace TenmoServer.Controllers
                 return NotFound();
             }
         }
+        [HttpGet("currentuser")]
+        public ActionResult<User> GetCurrentUsers()
+        {
+            string userId = User.FindFirst("sub").Value;
+            int id = Int32.Parse(userId);
+
+            User user = userDao.GetCurrentUser(id);
+
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
     }
 }

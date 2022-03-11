@@ -94,7 +94,7 @@ namespace TenmoClient
                 //ListUsers();
                 ////List<ApiUser> users = tenmoApiService.GetUsers();
                 // Console.WriteLine(users);
-                SendTransfer();
+                SendBucks();
 
             }
 
@@ -184,20 +184,23 @@ namespace TenmoClient
             ApiTransfer transfer = tenmoApiService.GetTransferById(id);
             Console.WriteLine($"{transfer.TransferId} {transfer.AccountFrom} {transfer.AccountTo} {transfer.TransferTypeId} {transfer.TransferStatusId} {transfer.Amount}");
         }
-        public void SendTransfer()
+        public void SendBucks()
         {
             try
             {
                 List<ApiUser> users = tenmoApiService.GetUsers();
-
+                string id = "Id";
+                string username = "Username";
                 Console.WriteLine();
                 Console.WriteLine();
-
+                Console.WriteLine("|----------Users----------|");
+                Console.WriteLine($"| {id.PadLeft(5)} | {username.PadRight(15)} |");
+                Console.WriteLine("|-------------------------|");
                 foreach (ApiUser user in users)
                 {
-                    Console.WriteLine($"{user.UserId} {user.Username}");
+                    Console.WriteLine($"| {user.UserId.ToString().PadLeft(5)} | {user.Username.ToString().PadRight(15)} |");
                 }
-                Console.WriteLine();
+                Console.WriteLine("|-------------------------|");
             }
             catch (Exception ex)
             {
@@ -205,12 +208,8 @@ namespace TenmoClient
                 Console.WriteLine();
                 Console.WriteLine("Unable to list users: " + ex.Message);
             }
-
-            int accountFromId = console.PromptForTransferAccoutFrom();
-            if (accountFromId == 0)
-            {
-                return;
-            }
+            ApiUser currentUser = tenmoApiService.GetCurrentUser();
+            int accountFromId = currentUser.UserId += 1000;
             int accountToId = console.PromptForTransferAccountTo();
             if (accountToId == 0)
             {
@@ -227,13 +226,8 @@ namespace TenmoClient
             ApiTransfer transfer = new ApiTransfer(accountToId, accountFromId, amount, transferTypeId, transferStatusId);
             tenmoApiService.AddTransfer(transfer);
 
-
-            //ApiAccount accountFrom = tenmoApiService.GetAccountById(accountFromId);
-            //ApiAccount accountTo = tenmoApiService.GetAccountById(accountToId);
-            //Console.WriteLine("Transfer successful.");
-            //Console.WriteLine($"{accountFrom.Account_Id} {accountFrom.Balance}");
-            //Console.WriteLine($"{accountTo.Account_Id} {accountTo.Balance}");
-            //console.Pause();
+            Console.WriteLine("Transfer successful.");
+            console.Pause();
         }
         public void GetTransfers()
         {

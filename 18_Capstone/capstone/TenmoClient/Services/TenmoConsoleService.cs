@@ -6,6 +6,7 @@ namespace TenmoClient.Services
 {
     public class TenmoConsoleService : ConsoleService
     {
+        
         /************************************************************
             Print methods
         ************************************************************/
@@ -61,14 +62,7 @@ namespace TenmoClient.Services
             accountTo += 1000;
             return accountTo;
         }
-        public int PromptForTransferAccoutFrom()
-        {
-            Console.WriteLine("Please input your user id");
-            string userInput = Console.ReadLine();
-            int accountFrom = Int32.Parse(userInput);
-            accountFrom += 1000;
-            return accountFrom;
-        }
+      
         public decimal PromptForTransferAmount()
         {
             Console.WriteLine("Please input amount to transfer");
@@ -76,6 +70,6 @@ namespace TenmoClient.Services
             decimal amount = Decimal.Parse(userInput);
             return amount;
         }
-
+       
     }
 }

@@ -38,7 +38,7 @@ namespace TenmoServer.Controllers
         public ActionResult<Account> GetAccountById(int id)
         {
             
-            Account account = accountDao.GetAccountByUserId(id);
+            Account account = accountDao.GetAccountByAccountId(id);
 
             if (account == null)
             {

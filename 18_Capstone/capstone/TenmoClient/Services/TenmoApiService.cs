@@ -61,6 +61,13 @@ namespace TenmoClient.Services
             CheckForError(response);
             return response.Data;
         }
+        public ApiUser GetCurrentUser()
+        {
+            RestRequest request = new RestRequest($"user/currentuser");
+            IRestResponse<ApiUser> response = client.Get<ApiUser>(request);
+            CheckForError(response);
+            return response.Data;
+        }
         public ApiAccount GetAccountById(int id)
         {
             RestRequest request = new RestRequest($"account/{id}");
