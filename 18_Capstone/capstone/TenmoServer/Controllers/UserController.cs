@@ -33,6 +33,20 @@ namespace TenmoServer.Controllers
                 return NotFound();
             }
         }
+        [HttpGet("{id}")]
+        public ActionResult<User> GetUserById(int id)
+        {
+            User user = userDao.GetUserById(id);
+
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
         [HttpGet("currentuser")]
         public ActionResult<User> GetCurrentUsers()
         {

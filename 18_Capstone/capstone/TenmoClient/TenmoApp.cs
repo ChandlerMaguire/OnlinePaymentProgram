@@ -91,11 +91,7 @@ namespace TenmoClient
             if (menuSelection == 4)
             {
                 // Send TE bucks
-                //ListUsers();
-                ////List<ApiUser> users = tenmoApiService.GetUsers();
-                // Console.WriteLine(users);
                 SendBucks();
-
             }
 
             if (menuSelection == 5)
@@ -179,10 +175,18 @@ namespace TenmoClient
                 Console.WriteLine($"{user.UserId} {user.Username}");
             }
         }
-        public void GetTransferById(int id)
+        public ApiTransfer GetTransferById(int id)
         {
-            ApiTransfer transfer = tenmoApiService.GetTransferById(id);
-            Console.WriteLine($"{transfer.TransferId} {transfer.AccountFrom} {transfer.AccountTo} {transfer.TransferTypeId} {transfer.TransferStatusId} {transfer.Amount}");
+            ApiTransfer transfer = null;
+            try
+            {
+                transfer = tenmoApiService.GetTransferById(id);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid transfer Id");
+            }
+            return transfer;
         }
         public void SendBucks()
         {
@@ -210,19 +214,59 @@ namespace TenmoClient
             }
             ApiUser currentUser = tenmoApiService.GetCurrentUser();
             int accountFromId = currentUser.UserId += 1000;
-            int accountToId = console.PromptForTransferAccountTo();
-            if (accountToId == 0)
-            {
-                return;
-            }
-            decimal amount = console.PromptForTransferAmount();
 
-            if (amount == 0)
+            bool done = false;
+            int accountToId = 0;
+
+            while (!done)
             {
-                return;
+                accountToId = console.PromptForTransferAccountTo();
+                if (accountToId == 0)
+                {
+                    return;
+                }
+                if (accountFromId == accountToId)
+                {
+                    Console.WriteLine("Account ID cannot be your own.");
+                }
+                else
+                {
+                    done = true;
+                }
             }
+
+            done = false;
+            decimal amount = 0;
+
+            while (!done)
+            {
+                amount = console.PromptForTransferAmount();
+                ApiUser user = tenmoApiService.GetCurrentUser();
+                int accountId = user.UserId += 1000;
+                ApiAccount account = tenmoApiService.GetAccountById(accountId);
+
+                if (amount == 0)
+                {
+                    done = true;
+                    return;
+                }
+                else if (amount < 0)
+                {
+                    Console.WriteLine("Amount cannot be negative.");
+                    console.Pause();
+                    continue;
+                }
+                else if (amount > account.Balance)
+                {
+                    Console.WriteLine("Amount cannot be greater than account balance.");
+                    continue;
+                }
+                done = true;
+            }
+
             int transferStatusId = 2;
             int transferTypeId = 2;
+
             ApiTransfer transfer = new ApiTransfer(accountToId, accountFromId, amount, transferTypeId, transferStatusId);
             tenmoApiService.AddTransfer(transfer);
 
@@ -232,19 +276,89 @@ namespace TenmoClient
         public void GetTransfers()
         {
             List<ApiTransfer> transfers = tenmoApiService.GetTransfers();
-            foreach(ApiTransfer transfer in transfers)
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine("Transfers");
+            Console.WriteLine($"ID" + " " + "From/To".PadLeft(15) + " " + "Amount".PadLeft(15));
+            Console.WriteLine("------------------------------------");
+
+            foreach (ApiTransfer transfer in transfers)
             {
-                Console.WriteLine($"{transfer.TransferId} {transfer.AccountFrom} {transfer.AccountTo} {transfer.Amount}");
+                int userFromId = transfer.AccountFrom -= 1000;
+                ApiUser userFrom = tenmoApiService.GetUserById(userFromId);
+
+                int userToId = transfer.AccountTo -= 1000;
+                ApiUser userTo = tenmoApiService.GetUserById(userToId);
+
+                string from = "From:";
+                string to = "To:";
+
+                Console.WriteLine($"{transfer.TransferId} {from.PadLeft(11)} {userFrom.Username.PadLeft(2)} {transfer.Amount.ToString("C").PadLeft(11)}");
+                Console.WriteLine($"{transfer.TransferId} {to.PadLeft(9).PadRight(2)} {userTo.Username.PadLeft(6)} {transfer.Amount.ToString("C").PadLeft(11)}");
+
             }
-            console.Pause();
-            Console.Write("Input ID to see transfer details.");
+            Console.WriteLine("------------------------------------");
+            Console.Write("Input ID to see transfer details (0 to cancel): ");
+
+
             string userInput = Console.ReadLine();
             int transferId = Int32.Parse(userInput);
-            GetTransferById(transferId);
-            console.Pause();
+
+            if (transferId != 0)
+            {
+
+                ApiTransfer transfer = GetTransferById(transferId);
+                if(transfer == null)
+                {
+                    console.Pause();
+                    return;
+                }
+                int userFromId = transfer.AccountFrom -= 1000;
+                ApiUser userFrom = tenmoApiService.GetUserById(userFromId);
+
+                int userToId = transfer.AccountTo -= 1000;
+                ApiUser userTo = tenmoApiService.GetUserById(userToId);
+
+                string transferType = null;
+                string transferStatus = null;
+
+                if (transfer.TransferTypeId == 2)
+                {
+                    transferType = "Send";
+                }
+                else if (transfer.TransferTypeId == 1)
+                {
+                    transferType = "Request";
+                }
+
+                if (transfer.TransferStatusId == 2)
+                {
+                    transferStatus = "Approved";
+                }
+                else if (transfer.TransferStatusId == 1)
+                {
+                    transferStatus = "Pending";
+                }
+                else if (transfer.TransferStatusId == 3)
+                {
+                    transferStatus = "Rejected";
+                }
+                Console.WriteLine();
+                Console.WriteLine("------------------------------------");
+                Console.WriteLine("Transfer Details");
+                Console.WriteLine("------------------------------------");
+                Console.WriteLine($"Id: {transfer.TransferId}");
+                Console.WriteLine($"From: {userFrom.Username}");
+                Console.WriteLine($"To: {userTo.Username}");
+                Console.WriteLine($"Type: {transferType}");
+                Console.WriteLine($"Status: {transferStatus}");
+                Console.WriteLine($"Amount: {transfer.Amount.ToString("C")}");
+                Console.WriteLine();
+                console.Pause();
             }
+            return;
         }
     }
+}
 
 
 

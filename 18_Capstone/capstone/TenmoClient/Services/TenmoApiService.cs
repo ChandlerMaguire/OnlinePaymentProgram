@@ -56,7 +56,7 @@ namespace TenmoClient.Services
         }
         public ApiUser GetUserById(int id)
         {
-            RestRequest request = new RestRequest($"users/{id}");
+            RestRequest request = new RestRequest($"user/{id}");
             IRestResponse<ApiUser> response = client.Get<ApiUser>(request);
             CheckForError(response);
             return response.Data;
@@ -93,6 +93,10 @@ namespace TenmoClient.Services
                 else if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     message = $"The user does not have permission.";
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    message = $"An http error occurred. Status code {(int)response.StatusCode} {response.StatusDescription}";
                 }
                 else
                 {
